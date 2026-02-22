@@ -17,6 +17,12 @@ SCENES.forEach(sc => {
 
 let currentAudio = null;
 
+// Background music -- continuous across all scenes
+// Drop audio/music.mp3 into place to enable
+const musicEl = new Audio('audio/music.mp3');
+musicEl.loop = true;
+musicEl.volume = 0.25;
+
 function stopAllAudio() {
   Object.values(audioEls).forEach(a => { a.pause(); a.currentTime = 0; });
   currentAudio = null;
@@ -205,6 +211,7 @@ function play() {
   lastTs=null;
   const si = sceneIndexAt(elapsed);
   playSceneAudio(SCENES[si]);
+  musicEl.play().catch(()=>{});
   rafId=requestAnimationFrame(tick);
 }
 function stop() {
@@ -213,6 +220,8 @@ function stop() {
   lastTs=null; lastSceneIndex=-1;
   if(rafId) cancelAnimationFrame(rafId);
   stopAllAudio();
+  musicEl.pause();
+  musicEl.currentTime=0;
 }
 function jumpTo(i) {
   const wasPlaying = playing;
