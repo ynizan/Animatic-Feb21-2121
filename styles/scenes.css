@@ -279,12 +279,12 @@
 /* Ron B. emphasis -- camera zoom + pan across card */
 @keyframes s7-camera-zoom-pan {
   0%   { transform:scale(1); }
-  35%  { transform:scale(2); }
-  100% { transform:scale(2) translateX(-10%); }
+  25%  { transform:scale(2); }
+  100% { transform:scale(2) translateX(-20%); }
 }
 #s7.active .s6-win {
-  transform-origin:18% 38%;
-  animation:s7-camera-zoom-pan 2.2s cubic-bezier(0.22,1,0.36,1) 1.2s both;
+  transform-origin:8% 38%;
+  animation:s7-camera-zoom-pan 3.2s cubic-bezier(0.25,1,0.5,1) 1.2s both;
 }
 
 /* ---------------------------------------------
