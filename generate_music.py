@@ -4,9 +4,12 @@ Generate background music for the InTouch animatic.
 
 Arc: slow ambient intro → builds midway → uplifting energetic finish.
 
-  0 – 28s   Ambient pads only (BPM 90, long 8-beat chords)
-  28 – 45s  Pads fade out, arpeggio fades in, BPM ramps to ~97
-  45 – 85s  Pads return at low volume, 8th-note arpeggio + melody, BPM ~106
+  0  – 26s  Ambient pads only (BPM 90)
+  26 – 30s  A→B crossfade: pads fade out, quarter arpeggio fades in
+  30 – 35s  Pads gone, quarter-note arpeggio (BPM 97)
+  35 – 40s  8th-notes enter (cross-fading from quarter), BPM 97
+  40 – 45s  BPM rises to 106, high melody starts growing
+  45 – 85s  Pads return (short, lower vol), 8th-note arpeggio + growing melody
 
 Output:
     audio/music.mp3         (85 seconds, 128kbps MP3)
@@ -20,18 +23,29 @@ import numpy as np
 import scipy.io.wavfile
 from pydub import AudioSegment
 
-SR          = 44100
-TARGET_SEC  = 85.0
-GEN_SEC     = TARGET_SEC + 3
+SR         = 44100
+TARGET_SEC = 85.0
+GEN_SEC    = TARGET_SEC + 3
 
-# Per-section BPM (arpeggios get faster each section)
-BPM_A  = 90                        # 0–28s  pads only
-BPM_B  = 97                        # 28–45s transition (+8%)
-BPM_C  = 106                       # 45–85s uplifting (+18%)
+# ── TIMELINE (seconds) ───────────────────────────────────────────────────────
+T_AB_START  = 26.0   # pads begin fading, quarter arp begins entering
+T_AB_END    = 30.0   # pads gone, quarter arp fully in
+T_8TH       = 35.0   # 8th-note arpeggio fades in (replaces quarter over 3s)
+T_TEMPO     = 40.0   # BPM jumps to 106, high melody starts growing
+T_PADS_BACK = 45.0   # pads return (shorter env, lower vol)
 
-BEAT_A = 60.0 / BPM_A              # 0.667s
-BEAT_B = 60.0 / BPM_B              # 0.619s
-BEAT_C = 60.0 / BPM_C              # 0.566s
+# ── BPM / BEAT ───────────────────────────────────────────────────────────────
+BPM_A = 90   # 0 – T_AB_END
+BPM_B = 97   # T_AB_END – T_TEMPO
+BPM_C = 106  # T_TEMPO – end
+
+def get_beat(t: float) -> float:
+    if t < T_AB_END:  return 60.0 / BPM_A
+    if t < T_TEMPO:   return 60.0 / BPM_B
+    return 60.0 / BPM_C
+
+def get_chord_beats(t: float) -> int:
+    return 8 if t < T_AB_END else 4   # long slow chords in A, shorter after
 
 OUTPUT_MP3 = "audio/music.mp3"
 PUBLIC_MP3 = "public/audio/music.mp3"
@@ -133,45 +147,58 @@ CHORDS = {
 
 PROGRESSION = ['C', 'Am', 'F', 'G']
 
-# ── SECTION BOUNDARIES ───────────────────────────────────────────────────────
+# ── TIME-BASED PARAMETER FUNCTIONS ──────────────────────────────────────────
 
-SEC_A_END = 28.0   # pads only
-SEC_B_END = 45.0   # transition: pads fade out, arpeggio fades in
-# SEC_C = 45 → 85s  pads back at low vol, 8th-note arpeggio + melody
+def _lerp(v0, v1, t0, t1, t):
+    """Linear interpolate between v0 and v1 as t goes from t0 to t1."""
+    return v0 + (v1 - v0) * max(0.0, min(1.0, (t - t0) / (t1 - t0)))
+
+def pad_vol(t: float) -> float:
+    """Pad volume multiplier over time."""
+    if t < T_AB_START:    return 1.0
+    if t < T_AB_END:      return _lerp(1.0, 0.0, T_AB_START, T_AB_END, t)  # fade out
+    if t < T_PADS_BACK:   return 0.0
+    return 0.42                                                               # return, lower
+
+def pad_env(t: float):
+    """(attack, release) for pads — shorter and punchier in section C."""
+    if t < T_PADS_BACK: return 0.5, 1.0
+    return 0.18, 0.40   # short, tight on return
+
+def bass_vol(t: float) -> float:
+    """Bass follows pads but lingers a bit longer into the transition."""
+    if t < T_AB_START:  return 1.0
+    if t < T_AB_END + 3: return _lerp(1.0, 0.0, T_AB_START, T_AB_END + 3, t)
+    if t < T_PADS_BACK: return 0.0
+    return 0.42
+
+def q_arp_vol(t: float) -> float:
+    """Quarter-note arpeggio: enters 26-30s, fades out 35-38s."""
+    if t < T_AB_START:   return 0.0
+    if t < T_AB_END:     return _lerp(0.0, 0.22, T_AB_START, T_AB_END, t)   # fade in
+    if t < T_8TH:        return 0.22                                           # full
+    if t < T_8TH + 3.0:  return _lerp(0.22, 0.0, T_8TH, T_8TH + 3.0, t)    # fade out
+    return 0.0
+
+def e_arp_vol(t: float) -> float:
+    """8th-note arpeggio: enters 35-38s, stays full through section C."""
+    if t < T_8TH:        return 0.0
+    if t < T_8TH + 3.0:  return _lerp(0.0, 0.24, T_8TH, T_8TH + 3.0, t)
+    return 0.24
+
+def melody_vol(t: float) -> float:
+    """High melody: grows from T_TEMPO (40s) to end."""
+    if t < T_TEMPO: return 0.0
+    return _lerp(0.0, 0.17, T_TEMPO, TARGET_SEC, t)
 
 # ── TRACK BUILDER ────────────────────────────────────────────────────────────
 
-def section_params(t: float):
-    """Return (beat, chord_beats) for the section at time t."""
-    if t < SEC_A_END:
-        return BEAT_A, 8           # long 8-beat chords, slow
-    elif t < SEC_B_END:
-        return BEAT_B, 4           # 4-beat chords, BPM 97
-    else:
-        return BEAT_C, 4           # 4-beat chords, BPM 106
-
-
-def pad_fade(t: float) -> float:
-    """Pad volume multiplier: 1.0 in A, fades to 0 across B, returns to 0.55 in C."""
-    if t < SEC_A_END:
-        return 1.0
-    elif t < SEC_B_END:
-        # linear fade from 1.0 → 0.0
-        progress = (t - SEC_A_END) / (SEC_B_END - SEC_A_END)
-        return 1.0 - progress
-    else:
-        return 0.55   # pads return but stay low
-
-
-def arp_fade(t: float) -> float:
-    """Arpeggio volume multiplier: 0 in A, ramps up across B, full in C."""
-    if t < SEC_A_END:
-        return 0.0
-    elif t < SEC_B_END:
-        return (t - SEC_A_END) / (SEC_B_END - SEC_A_END)   # 0 → 1
-    else:
-        return 1.0
-
+MELODY_MAP = {
+    'C':  ['C5', 'G5'],
+    'Am': ['A5', 'E5'],
+    'F':  ['F5', 'C6'],
+    'G':  ['G5', 'D6'],
+}
 
 def make_track() -> np.ndarray:
     total = int(SR * GEN_SEC)
@@ -184,70 +211,60 @@ def make_track() -> np.ndarray:
         name = PROGRESSION[chord_idx % len(PROGRESSION)]
         ch   = CHORDS[name]
 
-        beat, chord_beats = section_params(t)
-        chord_dur = min(beat * chord_beats, GEN_SEC - t)
+        beat      = get_beat(t)
+        chord_dur = min(beat * get_chord_beats(t), GEN_SEC - t)
         if chord_dur < 0.05:
             break
         cn = int(SR * chord_dur)
 
-        # Fade factors for this chord (use midpoint time for smooth crossfades)
-        t_mid = t + chord_dur / 2
-        pf = pad_fade(t_mid)
-        af = arp_fade(t_mid)
+        # Use chord midpoint for smooth per-chord crossfades
+        tm = t + chord_dur / 2
 
         # ── PADS ──
-        PAD_BASE = 0.28
-        if pf > 0:
+        pv = pad_vol(tm)
+        if pv > 0.01:
+            atk, rel = pad_env(tm)
             for note in ch['pad']:
-                seg = pad_tone(freq(note), cn, atk=0.5, rel=1.0) * PAD_BASE * pf
+                seg = pad_tone(freq(note), cn, atk=atk, rel=rel) * 0.28 * pv
                 write(track, t, seg)
 
-        # ── BASS ── (follows pad presence but stays slightly longer into B)
-        bass_pf = min(pf * 1.4, 1.0)
-        if bass_pf > 0.05:
-            bseg = bass_tone(freq(ch['bass']), cn) * 0.14 * bass_pf
+        # ── BASS ──
+        bv = bass_vol(tm)
+        if bv > 0.01:
+            bseg = bass_tone(freq(ch['bass']), cn) * 0.14 * bv
             write(track, t, bseg)
 
-        # ── QUARTER ARPEGGIO (section B transition) ──
-        if SEC_A_END <= t < SEC_B_END and af > 0:
-            arp_notes = ch['arp']
-            step = beat           # one note per beat
-            arp_vol = 0.22 * af   # ramps from 0 → 0.22
-            for step_i in range(int(chord_dur / step)):
-                note_t = t + step_i * step
-                if note_t >= GEN_SEC:
-                    break
-                n2 = arp_notes[step_i % len(arp_notes)]
+        # ── QUARTER ARPEGGIO ──
+        qv = q_arp_vol(tm)
+        if qv > 0.01:
+            step = beat
+            for i in range(int(chord_dur / step)):
+                nt = t + i * step
+                if nt >= GEN_SEC: break
                 nn = min(int(SR * step * 0.82), int(SR * 0.5))
-                seg = bright_tone(freq(n2), nn, atk=0.01, rel=0.22) * arp_vol
-                write(track, note_t, seg)
+                seg = bright_tone(freq(ch['arp'][i % 4]), nn, atk=0.01, rel=0.22) * qv
+                write(track, nt, seg)
 
-        # ── 8TH ARPEGGIO + HIGH MELODY (section C) ──
-        if t >= SEC_B_END:
-            arp_notes = ch['arp']
-            step = beat / 2       # 8th notes at BPM_C
-            arp_vol = 0.24        # full presence
-            for step_i in range(int(chord_dur / step)):
-                note_t = t + step_i * step
-                if note_t >= GEN_SEC:
-                    break
-                n2 = arp_notes[step_i % len(arp_notes)]
+        # ── 8TH ARPEGGIO ──
+        ev = e_arp_vol(tm)
+        if ev > 0.01:
+            step = beat / 2
+            for i in range(int(chord_dur / step)):
+                nt = t + i * step
+                if nt >= GEN_SEC: break
                 nn = min(int(SR * step * 0.75), int(SR * 0.28))
-                seg = bright_tone(freq(n2), nn, atk=0.008, rel=0.16) * arp_vol
-                write(track, note_t, seg)
+                seg = bright_tone(freq(ch['arp'][i % 4]), nn, atk=0.008, rel=0.16) * ev
+                write(track, nt, seg)
 
-            # High melody on beats 1 and 3
-            melody_map = {'C': ['C5','G5'], 'Am': ['A5','E5'],
-                          'F': ['F5','C6'], 'G':  ['G5','D6']}
-            for mi, mn in enumerate(melody_map.get(name, [ch['arp'][-1]])):
-                note_t = t + mi * beat * 2
-                if note_t >= GEN_SEC:
-                    break
+        # ── HIGH MELODY (grows from T_TEMPO to end) ──
+        mv = melody_vol(tm)
+        if mv > 0.005:
+            for mi, mn in enumerate(MELODY_MAP.get(name, [ch['arp'][-1]])):
+                nt = t + mi * beat * 2
+                if nt >= GEN_SEC: break
                 nn = min(int(SR * beat * 1.5), int(SR * 0.9))
-                # gradually louder as section C progresses
-                c_progress = min((t - SEC_B_END) / 25.0, 1.0)
-                seg = bright_tone(freq(mn), nn, atk=0.02, rel=0.5) * (0.10 + 0.08 * c_progress)
-                write(track, note_t, seg)
+                seg = bright_tone(freq(mn), nn, atk=0.02, rel=0.5) * mv
+                write(track, nt, seg)
 
         t += chord_dur
         chord_idx += 1
@@ -257,14 +274,14 @@ def make_track() -> np.ndarray:
     track = reverb(track, wet=0.32)
 
     # ── OVERALL VOLUME ARC (vectorised) ──
-    ts = np.arange(total) / SR
+    ts   = np.arange(total) / SR
     gain = np.ones(total)
-    # B: ramp from 1.0 → 1.3
-    mask_b = (ts >= SEC_A_END) & (ts < SEC_B_END)
-    gain[mask_b] = 1.0 + 0.30 * ((ts[mask_b] - SEC_A_END) / (SEC_B_END - SEC_A_END))
-    # C: continue from 1.3 → 1.5 over first 30s, then hold
-    mask_c = ts >= SEC_B_END
-    gain[mask_c] = 1.30 + 0.20 * np.minimum((ts[mask_c] - SEC_B_END) / 30.0, 1.0)
+    # 26-40s: ramp 1.0 → 1.35
+    m1 = (ts >= T_AB_START) & (ts < T_TEMPO)
+    gain[m1] = 1.0 + 0.35 * np.clip((ts[m1] - T_AB_START) / (T_TEMPO - T_AB_START), 0, 1)
+    # 40-85s: continue 1.35 → 1.55
+    m2 = ts >= T_TEMPO
+    gain[m2] = 1.35 + 0.20 * np.clip((ts[m2] - T_TEMPO) / (TARGET_SEC - T_TEMPO), 0, 1)
     track *= gain
 
     # ── NORMALIZE ──
@@ -273,10 +290,8 @@ def make_track() -> np.ndarray:
         track = track / peak * 0.88
 
     # ── GLOBAL FADES ──
-    fi = int(SR * 4.0)
-    fo = int(SR * 5.0)
-    track[:fi]  *= np.linspace(0, 1, fi)
-    track[-fo:] *= np.linspace(1, 0, fo)
+    track[:int(SR * 4.0)] *= np.linspace(0, 1, int(SR * 4.0))
+    track[-int(SR * 5.0):] *= np.linspace(1, 0, int(SR * 5.0))
 
     return (track * 32767).astype(np.int16)
 
@@ -294,7 +309,8 @@ def write(track: np.ndarray, t_sec: float, seg: np.ndarray):
 
 def main():
     print("Generating background music…")
-    print(f"  Arc: pads-only 0–{SEC_A_END}s  |  transition {SEC_A_END}–{SEC_B_END}s (BPM {BPM_B})  |  uplifting {SEC_B_END}–85s (BPM {BPM_C})")
+    print(f"  0–{T_AB_START}s pads | {T_AB_START}–{T_AB_END}s A→B xfade | {T_AB_END}–{T_8TH}s quarter arp (BPM {BPM_B})")
+    print(f"  {T_8TH}s 8ths enter | {T_TEMPO}s BPM→{BPM_C} + melody grows | {T_PADS_BACK}s pads return (short)")
 
     audio = make_track()
 
