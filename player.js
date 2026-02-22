@@ -197,6 +197,9 @@ function render() {
   // S8 custom animations -- meetings pop in gradually
   if(sc.id === 's8') renderS8(scElapsed);
 
+  // S9 custom animations -- gradual event appearance
+  if(sc.id === 's9') renderS9(scElapsed);
+
   // S10 custom animation -- counting up to 30
   if(sc.id === 's10') renderS10(scElapsed);
 
@@ -479,6 +482,33 @@ function renderS8(t) {
   const topEl = document.getElementById('s8-stat-top');
   if(introEl) introEl.textContent = introCount;
   if(topEl) topEl.textContent = topCount;
+}
+
+// ===============================================================
+// S9 -- WEEK SWIPE + RAPID EVENT FILL
+// ===============================================================
+function renderS9(t) {
+  const oldCal = document.getElementById('s9-old');
+  const newCal = document.getElementById('s9-new');
+
+  // Swipe at 800ms: old week out left, new week in from right
+  const swiped = t >= 800;
+  if(oldCal) oldCal.classList.toggle('s9-swiped', swiped);
+  if(newCal) newCal.classList.toggle('s9-swiped', swiped);
+
+  // Rapid event appearance on new calendar
+  const evs = document.querySelectorAll('#s9-new .s9-ev-anim');
+  let count = 0;
+  evs.forEach(ev => {
+    const delay = parseInt(ev.dataset.appear) || 0;
+    const visible = t >= delay;
+    ev.classList.toggle('s9-ev-in', visible);
+    if(visible) count++;
+  });
+
+  // Update counter
+  const counterEl = document.getElementById('s9-count');
+  if(counterEl) counterEl.textContent = count;
 }
 
 // ===============================================================
