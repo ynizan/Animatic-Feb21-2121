@@ -1,7 +1,7 @@
 import React from "react";
-import { interpolate, spring } from "remotion";
+import { interpolate, spring, useCurrentFrame } from "remotion";
 
-// ── Design tokens (matching the HTML animatic)
+// ── Design tokens
 const GOLD = "#C07820";
 const GOLD_LIGHT = "#D4A574";
 const GRAY_TEXT = "#6B6860";
@@ -9,13 +9,8 @@ const DARK = "#1A1916";
 const BG = "#F5F3EE";
 const FPS = 30;
 
-// Spring presets
 const SOFT = { damping: 80, stiffness: 180, mass: 0.8 };
 const SNAPPY = { damping: 90, stiffness: 260, mass: 0.7 };
-
-function useFade(frame: number, startFrame: number, durationFrames = 18) {
-  return spring({ frame: frame - startFrame, fps: FPS, from: 0, to: 1, config: SOFT });
-}
 
 function useSlideUp(frame: number, startFrame: number, distance = 8) {
   const p = spring({ frame: frame - startFrame, fps: FPS, from: 0, to: 1, config: SOFT });
@@ -35,12 +30,9 @@ function useSlideUp(frame: number, startFrame: number, distance = 8) {
 //  110-122 Gold "Top Tier investors" fades + scales
 //  110-122 Gold dot pulse
 
-interface Props {
-  frame: number;
-  totalFrames: number;
-}
+export function S01Opening() {
+  const frame = useCurrentFrame();
 
-export function S01Opening({ frame }: Props) {
   // Eyebrow
   const eyebrowOpacity = spring({ frame, fps: FPS, from: 0, to: 1, config: SOFT });
   const eyebrowY = useSlideUp(frame, 0);
