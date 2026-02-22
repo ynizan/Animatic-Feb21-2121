@@ -200,6 +200,9 @@ function render() {
   // S9 custom animations -- gradual event appearance
   if(sc.id === 's9') renderS9(scElapsed);
 
+  // S10 custom animation -- counting up to 30
+  if(sc.id === 's10') renderS10(scElapsed);
+
   // Progress
   const pct = (elapsed/TOTAL)*100;
   document.getElementById('progress-fill').style.width = pct+'%';
@@ -506,6 +509,28 @@ function renderS9(t) {
   // Update counter
   const counterEl = document.getElementById('s9-count');
   if(counterEl) counterEl.textContent = count;
+}
+
+// ===============================================================
+// S10 -- COUNTER ANIMATION (0 → 30)
+// ===============================================================
+function renderS10(t) {
+  const counterEl = document.getElementById('s10w7');
+  if(!counterEl) return;
+
+  // Counter starts immediately and reaches 30 to sync with VO "thirty"
+  const countStart = 0;
+  const countEnd   = 1200;
+
+  if(t < countStart) {
+    counterEl.textContent = '0';
+  } else if(t < countEnd) {
+    const p = (t - countStart) / (countEnd - countStart);
+    const count = Math.round(30 * easeOutQuad(p));
+    counterEl.textContent = count;
+  } else {
+    counterEl.textContent = '30';
+  }
 }
 
 function easeOutQuad(t) { return t * (2 - t); }
