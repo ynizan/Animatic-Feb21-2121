@@ -3,6 +3,7 @@
 // ===============================================================
 let elapsed=0, playing=false, speed=1.0, lastTs=null, rafId=null;
 let voVisible=false;
+let audioUnlocked=false;
 
 // ===============================================================
 // AUDIO ENGINE
@@ -254,6 +255,17 @@ function play() {
   document.getElementById('btn-play').innerHTML='&#9646;&#9646;';
   lastTs=null;
   const si = sceneIndexAt(elapsed);
+  lastSceneIndex = si;
+
+  // Unlock all audio elements on first play (user gesture context required).
+  // Browsers may block audio.play() called outside a user gesture (e.g. from
+  // requestAnimationFrame during scene transitions). Calling play() here --
+  // inside a click handler -- registers user intent for each element.
+  if(!audioUnlocked) {
+    audioUnlocked = true;
+    Object.values(audioEls).forEach(a => { a.play().catch(()=>{}); });
+  }
+
   playSceneAudio(SCENES[si]);
   updateMusicVolume();
   musicEl.play().catch(()=>{});
