@@ -194,6 +194,9 @@ function render() {
   // S6 custom animations -- counter, scan line, big text, results
   if(sc.id === 's6') renderS6(scElapsed);
 
+  // S9 custom animations -- gradual event appearance
+  if(sc.id === 's9') renderS9(scElapsed);
+
   // Progress
   const pct = (elapsed/TOTAL)*100;
   document.getElementById('progress-fill').style.width = pct+'%';
@@ -435,6 +438,23 @@ function renderS6(t) {
     statusBadge.style.animation = 'none';
     if(scanStatus) scanStatus.innerHTML = '&#9679; Ready';
   }
+}
+
+// ===============================================================
+// S9 -- GRADUAL EVENT APPEARANCE
+// ===============================================================
+function renderS9(t) {
+  const evs = document.querySelectorAll('#s9 .s9-ev-anim');
+  let visibleCount = 0;
+  evs.forEach(ev => {
+    const delay = parseInt(ev.dataset.appear) || 0;
+    const visible = t >= delay;
+    ev.classList.toggle('s9-ev-in', visible);
+    if(visible) visibleCount++;
+  });
+  // Update Top Tier stat counter
+  const topTierNum = document.getElementById('s9-top-tier-num');
+  if(topTierNum) topTierNum.textContent = visibleCount;
 }
 
 function easeOutQuad(t) { return t * (2 - t); }
