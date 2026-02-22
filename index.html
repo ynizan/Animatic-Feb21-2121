@@ -59,13 +59,24 @@ const SCENES = [
   },
   {
     id:'s2', label:'S2 -- Closed Garden', duration:10000,
-    type:'B', dark:false, audio:'s2.mp3',
+    type:'C', dark:false, audio:'s2.mp3',
+    card:'s2-card', cardIn:0, cardOut:9500,
     vo:"I was raising a seed round. Every week I had a few meetings -- advisors, friends, customers. But they never led to investor intros.",
     phrases:[
-      {id:'s2p0', start:0,    end:3100},
-      {id:'s2p1', start:3100, end:6600},
-      {id:'s2p2', start:6600, end:9430},
-      {id:'s2leg',start:7800, end:9430, isLegend:true},
+      {id:'s2p0',    start:0,    end:3100},
+      {id:'s2p1',    start:3100, end:6600},
+      {id:'s2p2',    start:6600, end:9430},
+      {id:'s2leg',   start:7800, end:9430, isLegend:true},
+      // Real events pulse during "advisors, friends, customers"
+      {id:'s2ev-david', start:3100, end:6600, isEvent:true},
+      {id:'s2ev-maya',  start:3100, end:6600, isEvent:true},
+      {id:'s2ev-tom',   start:3100, end:6600, isEvent:true},
+      {id:'s2ev-jake',  start:3100, end:6600, isEvent:true},
+      // Bigtext + ghost events pop together at last phrase
+      {id:'s2bigtext', start:6600, end:9430},
+      {id:'s2gh-a',    start:6600, end:9430, isEvent:true},
+      {id:'s2gh-b',    start:6600, end:9430, isEvent:true},
+      {id:'s2gh-c',    start:6600, end:9430, isEvent:true},
     ]
   },
   {

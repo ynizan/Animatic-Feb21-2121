@@ -1,5 +1,5 @@
 <!-- =======================================
-     SCENE 2 -- Calendar · Type B
+     SCENE 2 -- Calendar · Type C
 ======================================= -->
 <div class="scene scene-light" id="s2">
   <div class="s2-layout">
@@ -28,6 +28,8 @@
             <div class="s2-ts"><span class="tl" style="color:#CCC">12 PM</span></div>
             <div class="s2-ts"><span class="tl" style="color:#CCC">1 PM</span></div>
             <div class="s2-ts"><span class="tl" style="color:#CCC">2 PM</span></div>
+            <div class="s2-ts"><span class="tl" style="color:#CCC">3 PM</span></div>
+            <div class="s2-ts"><span class="tl" style="color:#CCC">4 PM</span></div>
           </div>
           <div class="day-col">
             <div class="s2-ev real ev" style="top:56px;height:50px;"><span class="ev-n">David (advisor)</span><span class="ev-t">10:00 AM</span></div>
@@ -37,35 +39,54 @@
             <div class="ev ghost-ev" style="top:8px;height:44px;"><div class="ghost-inner"><div class="ghost-dot"></div>Top Tier investor?</div></div>
           </div>
           <div class="day-col">
-            <div class="s2-ev real ev" style="top:112px;height:50px;"><span class="ev-n">Maya (customer)</span><span class="ev-t">11:00 AM</span></div>
+            <div id="s2ev-maya" class="s2-ev real ev" style="top:112px;height:50px;"><span class="ev-n">Maya (customer)</span><span class="ev-t">11:00 AM</span></div>
           </div>
           <div class="day-col">
             <div class="s2-ev real ev" style="top:168px;height:50px;"><span class="ev-n">Tom (old friend)</span><span class="ev-t">12:30 PM</span></div>
             <div class="ev ghost-ev" style="top:224px;height:44px;"><div class="ghost-inner"><div class="ghost-dot"></div>Top Tier investor?</div></div>
           </div>
           <div class="day-col">
-            <div class="s2-ev real ev" style="top:280px;height:50px;"><span class="ev-n">Jake (advisor)</span><span class="ev-t">2:30 PM</span></div>
+            <div id="s2ev-jake" class="s2-ev real ev" style="top:336px;height:50px;"><span class="ev-n">Jake (advisor)</span><span class="ev-t">2:30 PM</span></div>
           </div>
         </div>
       </div>
     </div>
-    <div class="s2-side">
+
+    <!-- Legend overlay — appears at 7800ms via isLegend -->
+    <div class="s2-legend" id="s2leg">
+      <div class="s2-li"><div class="dot" style="background:#9A9690;width:9px;height:9px;"></div>My network</div>
+      <div class="s2-li"><div class="s2-gswatch"></div>top tier investors (out of reach)</div>
+    </div>
+
+    <!-- Big-text callout — frameless, centered, appears at 6600ms -->
+    <div class="s2-bigtext phrase" id="s2bigtext">
+      <div class="s2-bt-eye">The wall</div>
+      <div class="s2-bt-main">couldn't get to<br><span class="s2-bt-highlight">top tier investors</span></div>
+    </div>
+
+    <!-- Narrator card (Type C) — light theme -->
+    <div class="narrator-card" id="s2-card">
+      <div class="nc-header">
+        <div class="nc-pulse"></div>
+        <div class="nc-label">narrating</div>
+      </div>
       <div class="phrase" id="s2p0">
         <div class="phrase-eye">The situation</div>
         <div class="phrase-txt">I was raising a <span class="g">seed round</span>.</div>
       </div>
       <div class="phrase" id="s2p1">
         <div class="phrase-eye">Every week</div>
-        <div class="phrase-txt">A few meetings -- advisors, friends, customers. <b>Familiar faces.</b></div>
+        <div class="phrase-txt">A few meetings -- <span class="g">advisors</span>, <span class="g">friends</span>, customers. <b>Familiar faces.</b></div>
       </div>
       <div class="phrase" id="s2p2">
         <div class="phrase-eye">But</div>
-        <div class="phrase-txt">They <em>never</em> led to <span class="g">investor intros</span>. I was stuck in my closed garden.</div>
+        <div class="phrase-txt">They <em>never</em> led to <span class="g">investor intros.</span></div>
       </div>
       <div class="s2-legend" id="s2leg">
         <div class="s2-li"><div class="dot" style="background:#9A9690;width:9px;height:9px;"></div>My network</div>
         <div class="s2-li"><div class="s2-gswatch"></div>Top Tier investors (out of reach)</div>
       </div>
     </div>
+
   </div>
 </div>

@@ -19,10 +19,17 @@
 .s1-lconn { font-style:normal; font-family:'Manrope',sans-serif; font-size:13px; font-weight:600; color:#7A7870; margin:0 16px; letter-spacing:0.04em; }
 
 /* ---------------------------------------------
-   == SCENE 2 -- TYPE B · Light cal
+   == SCENE 2 -- TYPE B · Light cal (full-width)
 --------------------------------------------- */
 #s2 { background:#EEEAE2; display:flex; align-items:center; justify-content:center; }
-.s2-layout { display:flex; align-items:flex-start; gap:24px; padding:24px; width:100%; }
+
+@keyframes s2-enter {
+  from { opacity:0; transform:scale(0.97) translateY(8px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+#s2.active { animation: s2-enter 0.55s cubic-bezier(0.22,1,0.36,1); }
+
+.s2-layout { position:relative; display:flex; align-items:flex-start; padding:20px; width:100%; height:100%; }
 .s2-win { flex:1; background:#FAFAF7; border-radius:8px; box-shadow:0 12px 40px rgba(0,0,0,0.08); overflow:hidden; }
 .s2-win .window-chrome { background:#EDEAE2; border-color:#DDD9D0; }
 .s2-cal-h { padding:12px 20px 8px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #EEE; }
@@ -31,18 +38,106 @@
 .s2-dh { text-align:center; }
 .s2-dn { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#AAA; }
 .s2-dd { font-size:19px; font-weight:700; color:#666; }
-.s2-grid-wrap { height:340px; overflow:hidden; }
+.s2-grid-wrap { height:480px; overflow:hidden; }
 .s2-grid { height:100%; display:grid; grid-template-columns:46px repeat(5,1fr); padding:0 16px; }
 .s2-ts { height:56px; border-bottom:1px solid #F4F2EE; display:flex; align-items:flex-start; padding-top:4px; }
 .s2-ev { position:absolute; left:3px; right:3px; border-radius:4px; padding:5px 8px; font-size:11px; }
 .s2-ev.real { background:#D8D4CC; border-left:3px solid #9A9690; }
 .s2-ev .ev-n { font-weight:700; color:#5A5652; }
 .s2-ev .ev-t { font-size:10px; color:#AAA; }
-.s2-side { width:240px; flex-shrink:0; display:flex; flex-direction:column; padding-top:4px; }
-.s2-legend { display:flex; flex-direction:column; gap:6px; padding:10px 14px; background:rgba(0,0,0,0.03); border-radius:8px; margin-top:4px; opacity:0; transition:opacity 0.4s ease; }
+
+/* Legend — floating overlay bottom-left */
+.s2-legend {
+  position:absolute; bottom:36px; left:36px;
+  display:flex; flex-direction:column; gap:6px; padding:10px 14px;
+  background:rgba(238,234,226,0.93);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(212,165,116,0.18);
+  border-radius:8px;
+  opacity:0; transition:opacity 0.4s ease;
+  z-index:10;
+}
 .s2-legend.vis { opacity:1; }
 .s2-li { display:flex; align-items:center; gap:7px; font-size:10px; font-weight:600; color:#8A8680; }
 .s2-gswatch { width:10px; height:10px; border-radius:2px; border:1.5px dashed rgba(212,165,116,0.4); flex-shrink:0; }
+
+/* Big-text callout — frosted pill behind text, full-width centered */
+.s2-bigtext {
+  position:absolute;
+  left:0; right:0;
+  top:38%;
+  text-align:center;
+  z-index:10;
+  pointer-events:none;
+  padding:28px 40px 32px;
+  /* Frosted glass backdrop */
+  background:rgba(238,234,226,0.82);
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 8px 48px rgba(0,0,0,0.09), 0 2px 12px rgba(0,0,0,0.05);
+}
+.s2-bigtext.active {
+  opacity:1 !important;
+  transform:translateY(-50%) !important;
+  border-left:none !important;
+}
+.s2-bigtext.future { opacity:0; transform:translateY(calc(-50% + 22px)); }
+.s2-bigtext.past   { opacity:0; transform:translateY(calc(-50% - 10px)); }
+
+.s2-bt-eye {
+  font-size:10px; font-weight:800; letter-spacing:0.16em;
+  text-transform:uppercase; color:var(--ink-faint); margin-bottom:14px;
+}
+.s2-bt-main {
+  font-family:'Manrope',sans-serif;
+  font-weight:800;
+  font-size:52px;
+  line-height:1.2;
+  color:var(--ink);
+  letter-spacing:-0.03em;
+}
+.s2-bt-highlight {
+  color:var(--gold);
+  display:block;
+  font-size:62px;
+  margin-top:6px;
+  text-shadow:0 0 48px rgba(212,165,116,0.45);
+}
+
+/* S2 light-theme narrator card override */
+#s2-card {
+  background:rgba(232,228,220,0.96);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  border-top:1px solid rgba(212,165,116,0.28);
+}
+#s2-card .nc-label { color:rgba(212,165,116,0.75); }
+#s2-card .phrase-txt {
+  font-size:22px; line-height:1.5; color:var(--ink-light);
+}
+#s2-card .phrase-txt b  { color:var(--ink); }
+#s2-card .phrase-txt em { color:var(--ink); }
+#s2-card .phrase-txt .g { color:var(--gold); font-size:22px; }
+
+/* Real event pulse — during "advisors / friends / customers" phrase */
+.s2-ev.ev-hi {
+  animation:s2-ev-pulse 1.2s ease-in-out infinite;
+  border-left-color:var(--gold) !important;
+  box-shadow:0 4px 16px rgba(0,0,0,0.12), 0 0 0 2px rgba(212,165,116,0.32);
+  z-index:5;
+}
+@keyframes s2-ev-pulse {
+  0%, 100% { transform:scale(1); }
+  50%       { transform:scale(1.14); }
+}
+
+/* Ghost event pulse — when "The wall" bigtext appears */
+.ghost-ev.ev-hi {
+  animation:s2-ghost-pulse 1.8s ease-in-out infinite;
+  border-color:rgba(212,165,116,0.7) !important;
+}
+@keyframes s2-ghost-pulse {
+  0%, 100% { transform:scale(1);     opacity:0.85; }
+  50%       { transform:scale(1.06); opacity:1; }
+}
 
 /* ---------------------------------------------
    == SCENE 3 -- TYPE B · Light LinkedIn
