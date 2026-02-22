@@ -1,215 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>InTouch -- Animatic v2</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;1,300;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles/base.css">
-<link rel="stylesheet" href="styles/scenes.css">
-</head>
-<body>
-<div id="player">
-<div id="canvas">
-
-<!-- SCENES_INJECT -->
-
-</div><!-- #canvas -->
-
-<!-- ---------------------------------------------
-     CONTROLS
---------------------------------------------- -->
-<div id="controls">
-  <div id="progress-track">
-    <div id="progress-fill"></div>
-    <div id="scene-markers"></div>
-  </div>
-  <div id="ctrl-row">
-    <button class="cbtn" id="btn-prev" title="Prev scene">&#9664;&#9664;</button>
-    <button class="cbtn" id="btn-play" title="Play/Pause">&#9654;</button>
-    <button class="cbtn" id="btn-next" title="Next scene">&#9654;&#9654;</button>
-    <div id="time-disp">0:00 / 1:25</div>
-    <div id="scene-info">
-      <div id="scene-lbl">S1 -- Opening</div>
-      <div id="scene-ctr">1 / 10</div>
-    </div>
-    <button class="spd-btn on" id="spd-1x">1&times;</button>
-    <button class="spd-btn" id="spd-75">0.75&times;</button>
-    <button class="spd-btn" id="spd-125">1.25&times;</button>
-    <button id="vo-toggle">VO OFF</button>
-  </div>
-  <div id="thumb-strip"></div>
-</div>
-
-<div id="vo-bar">
-  <div id="vo-text">--</div>
-</div>
-
-</div><!-- #player -->
-
-<script>
-// ===============================================================
-// SCENE DEFINITIONS
-// ===============================================================
-const SCENES = [
-  {
-    id:'s1', label:'S1 -- Opening', duration:4000,
-    type:'A', dark:false, audio:null,
-    vo:'[music only -- title holds]',
-    words:[]
-  },
-  {
-    id:'s2', label:'S2 -- Closed Garden', duration:10000,
-    type:'B', dark:false, audio:'s2.mp3',
-    vo:"I was raising a seed round. Every week I had a few meetings -- advisors, friends, customers. But they never led to investor intros.",
-    phrases:[
-      {id:'s2p0', start:0,    end:3100},
-      {id:'s2p1', start:3100, end:6600},
-      {id:'s2p2', start:6600, end:9430},
-      {id:'s2leg',start:7800, end:9430, isLegend:true},
-    ]
-  },
-  {
-    id:'s3', label:'S3 -- Network Limits', duration:7400,
-    type:'B', dark:false, audio:'s3.mp3',
-    vo:"I'd scroll through 500 connections. All familiar. I had hit my network's limits. No path out.",
-    phrases:[
-      {id:'s3p0', start:0,    end:2500},
-      {id:'s3p1', start:2500, end:4800},
-      {id:'s3p2', start:4800, end:6920},
-    ]
-  },
-  {
-    id:'s4', label:'S4 -- Desperate Ask', duration:6500,
-    type:'B', dark:false, audio:'s4.mp3',
-    vo:"My follow-ups were embarrassing. Begging someone to just -- think of anyone who might help.",
-    phrases:[
-      {id:'s4p0', start:0,    end:2200},
-      {id:'s4p1', start:2200, end:4200},
-      {id:'s4p2', start:4200, end:6030},
-    ]
-  },
-  {
-    id:'s5', label:'S5 -- Then InTouch', duration:3500,
-    type:'A', dark:true, audio:'s5.mp3',
-    vo:"Then I started using InTouch.",
-    words:[
-      {id:'s5w0', start:200,  end:480},
-      {id:'s5w1', start:480,  end:860},
-      {id:'s5w2', start:860,  end:1250},
-      {id:'s5w3', start:1250, end:2170},
-      {id:'s5w4',  start:2400, end:2600},
-      {id:'s5w5',  start:2600, end:2720},
-      {id:'s5w6',  start:2720, end:2880},
-      {id:'s5w7',  start:2880, end:2940},
-      {id:'s5w8',  start:2940, end:3020},
-      {id:'s5w9',  start:3020, end:3180},
-      {id:'s5w10', start:3180, end:3280},
-      {id:'s5w11', start:3280, end:3350},
-      {id:'s5w12', start:3350, end:3420},
-      {id:'s5w13', start:3420, end:3470},
-      {id:'s5w14', start:3470, end:3510},
-      {id:'s5w15', start:3510, end:3560},
-      {id:'s5w16', start:3560, end:3590},
-      {id:'s5w17', start:3590, end:3620},
-      {id:'s5w18', start:3620, end:3650},
-      {id:'s5w19', start:3650, end:3680},
-      {id:'s5w20', start:3680, end:3720},
-      {id:'s5w21', start:3720, end:3760},
-    ]
-  },
-  {
-    id:'s6', label:'S6 -- Network Scan', duration:13000,
-    type:'B', dark:false, audio:'s6.mp3',
-    vo:"I was meeting with Jake -- a founder with deep VC connections. Before the meeting, InTouch scanned his network. Found who he could reach, and who could connect me up -- to investors I couldn't access on my own.",
-    phrases:[
-      {id:'s6p0', start:0,    end:4600},
-      {id:'s6p1', start:4600, end:8400},
-      {id:'s6p2', start:8400, end:12360},
-    ]
-  },
-  {
-    id:'s7', label:'S7 -- Strategic Ask Brief', duration:9200,
-    type:'B', dark:false, audio:'s7.mp3',
-    vo:"Then InTouch sent me a Strategic Ask Brief. Three specific people. Three specific reasons. I walked in knowing exactly who to ask for.",
-    phrases:[
-      {id:'s7p0', start:0,    end:3200},
-      {id:'s7p1', start:3200, end:6500},
-      {id:'s7p2', start:6500, end:8590},
-    ]
-  },
-  {
-    id:'s8', label:'S8 -- Momentum Building', duration:9000,
-    type:'C', dark:false, audio:'s8.mp3',
-    vo:"Each meeting started generating more intros -- to investors, serial founders, and top advisors. Access was opening up.",
-    card:'s8-card',
-    phrases:[
-      {id:'s8p0', start:300,  end:5200},
-      {id:'s8p1', start:5200, end:8542},
-    ],
-    cardIn:200, cardOut:8700
-  },
-  {
-    id:'s9', label:'S9 -- Momentum Compounded', duration:6200,
-    type:'C', dark:false, audio:'s9.mp3',
-    vo:"The momentum compounded. Better meetings. Higher confidence.",
-    card:'s9-card',
-    phrases:[
-      {id:'s9p0', start:300,  end:3000},
-      {id:'s9p1', start:3000, end:5564},
-    ],
-    cardIn:200, cardOut:5800
-  },
-  {
-    id:'s10', label:'S10 -- The Number', duration:5400,
-    type:'A', dark:true, audio:'s10.mp3',
-    vo:"Thirty top tier investor meetings. From conversations I was already having.",
-    words:[
-      {id:'s10w0',  start:150,  end:700},
-      {id:'s10w1',  start:150,  end:450},
-      {id:'s10w2',  start:450,  end:650},
-      {id:'s10w3',  start:650,  end:950},
-      {id:'s10w4',  start:950,  end:1300},
-      {id:'s10w5',  start:1300, end:1600},
-      {id:'s10w6',  start:1600, end:1950},
-      {id:'s10w7',  start:1950, end:3000},
-      {id:'s10w8',  start:1950, end:2200},
-      {id:'s10w9',  start:2200, end:2450},
-      {id:'s10w10', start:2450, end:2700},
-      {id:'s10w11', start:2700, end:3000},
-      {id:'s10w12', start:3200, end:3550},
-      {id:'s10w13', start:3550, end:3900},
-      {id:'s10w14', start:3900, end:4100},
-      {id:'s10w15', start:4100, end:4300},
-      {id:'s10w16', start:4300, end:4550},
-      {id:'s10w17', start:4550, end:4780},
-      {id:'s10w18', start:4800, end:4900},
-      {id:'s10w19', start:4900, end:5000},
-      {id:'s10w20', start:5000, end:5100},
-      {id:'s10w21', start:5100, end:5200},
-      {id:'s10w22', start:5200, end:5400},
-    ]
-  },
-  {
-    id:'s11', label:'S11 -- End Card', duration:5500,
-    type:'A', dark:true, audio:'s11.mp3',
-    vo:"InTouch. Stop networking in circles. Find the path out.",
-    words:[
-      {id:'s11w0', start:300,  end:800},
-      {id:'s11w1', start:800,  end:1400},
-      {id:'s11w2', start:1400, end:1700},
-      {id:'s11w3', start:1700, end:2300},
-      {id:'s11w4', start:2700, end:3000},
-      {id:'s11w5', start:3000, end:3200},
-      {id:'s11w6', start:3200, end:3500},
-      {id:'s11w7', start:3500, end:4210},
-    ]
-  }
-];
-
-const TOTAL = SCENES.reduce((s,sc)=>s+sc.duration,0);
-const START_TIMES = [];
-let acc=0; SCENES.forEach(sc=>{ START_TIMES.push(acc); acc+=sc.duration; });
-</script>
-<script src="player.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InTouch — Animatic</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;1,300;1,400&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: #0d0d0d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        font-family: 'Manrope', sans-serif;
+      }
+      #root { width: 100%; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

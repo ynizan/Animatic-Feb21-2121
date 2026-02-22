@@ -14,7 +14,9 @@ import { S09Compounded } from "./scenes/S09Compounded";
 import { S10Counter } from "./scenes/S10Counter";
 import { S11EndCard } from "./scenes/S11EndCard";
 
-// Background music toggle — set to true once audio/music.mp3 is placed in public/audio/
+// Background music:
+//   1. Place your music file at  public/audio/music.mp3
+//   2. Set MUSIC_ENABLED = true  (volume is already set low at 0.18)
 const MUSIC_ENABLED = false;
 
 // Calculate cumulative start frames
@@ -38,7 +40,7 @@ export function Animatic() {
     >
       {/* Background music */}
       {MUSIC_ENABLED && (
-        <Audio src={staticFile("audio/music.mp3")} volume={0.25} />
+        <Audio src={staticFile("audio/music.mp3")} volume={0.18} />
       )}
 
       {/* S1 — Opening */}
