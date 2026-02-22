@@ -7,8 +7,8 @@
     "preview": "npx remotion preview src/index.tsx",
     "render": "npx remotion render src/index.tsx Animatic out/animatic.mp4",
     "setup-audio": "mkdir -p public/audio && cp audio/*.mp3 public/audio/",
-    "pages:deploy": "npx wrangler pages deploy dist",
-    "pages:deploy:preview": "npx wrangler pages deploy dist --branch preview"
+    "pages:deploy": "npx wrangler pages deploy dist --project-name intouch-video",
+    "pages:deploy:preview": "npx wrangler pages deploy dist --project-name intouch-video --branch preview"
   },
   "dependencies": {
     "remotion": "^4.0.250",
