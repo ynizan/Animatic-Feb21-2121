@@ -276,14 +276,14 @@
 #s7.active .s6-card.d2 { animation:s7-card-enter 0.5s cubic-bezier(0.22,1,0.36,1) 0.35s backwards; }
 #s7.active .s6-card.d3 { animation:s7-card-enter 0.5s cubic-bezier(0.22,1,0.36,1) 0.5s backwards; }
 
-/* Ron B. text emphasis -- subtle zoom */
-@keyframes s7-ronb-zoom {
+/* Ron B. emphasis -- camera zoom into email */
+@keyframes s7-camera-zoom {
   from { transform:scale(1); }
-  to   { transform:scale(1.06); }
+  to   { transform:scale(2.5); }
 }
-#s7.active .s7-ronb-detail {
-  transform-origin:left top;
-  animation:s7-ronb-zoom 0.8s cubic-bezier(0.22,1,0.36,1) 1.5s both;
+#s7.active .s6-win {
+  transform-origin:40% 38%;
+  animation:s7-camera-zoom 1.5s cubic-bezier(0.22,1,0.36,1) 1.5s both;
 }
 
 /* ---------------------------------------------
