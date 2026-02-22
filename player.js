@@ -194,6 +194,9 @@ function render() {
   // S6 custom animations -- counter, scan line, big text, results
   if(sc.id === 's6') renderS6(scElapsed);
 
+  // S10 custom animation -- counting up to 30
+  if(sc.id === 's10') renderS10(scElapsed);
+
   // Progress
   const pct = (elapsed/TOTAL)*100;
   document.getElementById('progress-fill').style.width = pct+'%';
@@ -434,6 +437,28 @@ function renderS6(t) {
     statusBadge.style.background = '#A0AEC0';
     statusBadge.style.animation = 'none';
     if(scanStatus) scanStatus.innerHTML = '&#9679; Ready';
+  }
+}
+
+// ===============================================================
+// S10 -- COUNTER ANIMATION (0 → 30)
+// ===============================================================
+function renderS10(t) {
+  const counterEl = document.getElementById('s10w7');
+  if(!counterEl) return;
+
+  // Counter starts when the "30" word becomes active and finishes just before word end
+  const countStart = 1950;
+  const countEnd   = 2850;
+
+  if(t < countStart) {
+    counterEl.textContent = '0';
+  } else if(t < countEnd) {
+    const p = (t - countStart) / (countEnd - countStart);
+    const count = Math.round(30 * easeOutQuad(p));
+    counterEl.textContent = count;
+  } else {
+    counterEl.textContent = '30';
   }
 }
 
