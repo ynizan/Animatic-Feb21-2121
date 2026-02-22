@@ -50,8 +50,6 @@ function scale() {
   canvas.style.marginLeft = ml+'px';
   controls.style.marginLeft = ml+'px';
   voBar.style.marginLeft = ml+'px';
-  const s2sub = document.getElementById('s2-subbar');
-  if(s2sub) { s2sub.style.width = W+'px'; s2sub.style.marginLeft = ml+'px'; }
 }
 window.addEventListener('resize', scale);
 
@@ -95,14 +93,16 @@ function setWordState(id, state) {
   el.classList.add(state);
 }
 
-function setPhraseState(id, state, isLegend) {
+function setPhraseState(id, state, isLegend, isEvent) {
   const el = document.getElementById(id);
   if(!el) return;
   if(isLegend) {
-    el.className = state==='active'||state==='past' ? (el.className.includes('s2-legend') ? 's2-legend vis' : el.className) : (el.className.includes('s2-legend') ? 's2-legend' : el.className);
-    // simpler: just toggle 'vis'
     if(state==='active'||state==='past') el.classList.add('vis');
     else el.classList.remove('vis');
+    return;
+  }
+  if(isEvent) {
+    el.classList.toggle('ev-hi', state==='active');
     return;
   }
   el.classList.remove('future','active','past');
@@ -119,10 +119,6 @@ function render() {
     el.classList.toggle('active', i===si);
   });
 
-  // S2 subtitle bar — show only during S2
-  const s2sub = document.getElementById('s2-subbar');
-  if(s2sub) s2sub.classList.toggle('s2sub-visible', si===1);
-
   // Type A -- words
   if(sc.type==='A' && sc.words.length) {
     sc.words.forEach(w=>{
@@ -135,13 +131,13 @@ function render() {
   // Type B -- phrases
   if(sc.type==='B' && sc.phrases) {
     sc.phrases.forEach(p=>{
-      if(scElapsed < p.start)     setPhraseState(p.id,'future',p.isLegend);
-      else if(scElapsed <= p.end) setPhraseState(p.id,'active',p.isLegend);
-      else                        setPhraseState(p.id,'past',p.isLegend);
+      if(scElapsed < p.start)     setPhraseState(p.id,'future',p.isLegend,p.isEvent);
+      else if(scElapsed <= p.end) setPhraseState(p.id,'active',p.isLegend,p.isEvent);
+      else                        setPhraseState(p.id,'past',p.isLegend,p.isEvent);
     });
   }
 
-  // Type C -- card + phrases
+  // Type C -- card + phrases (supports isLegend and isEvent)
   if(sc.type==='C') {
     const card = document.getElementById(sc.card);
     if(card) {
@@ -154,9 +150,9 @@ function render() {
       }
     }
     if(sc.phrases) sc.phrases.forEach(p=>{
-      if(scElapsed < p.start)     setPhraseState(p.id,'future');
-      else if(scElapsed <= p.end) setPhraseState(p.id,'active');
-      else                        setPhraseState(p.id,'past');
+      if(scElapsed < p.start)     setPhraseState(p.id,'future',p.isLegend,p.isEvent);
+      else if(scElapsed <= p.end) setPhraseState(p.id,'active',p.isLegend,p.isEvent);
+      else                        setPhraseState(p.id,'past',p.isLegend,p.isEvent);
     });
   }
 

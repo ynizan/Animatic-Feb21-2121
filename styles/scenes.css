@@ -61,51 +61,79 @@
 .s2-li { display:flex; align-items:center; gap:7px; font-size:10px; font-weight:600; color:#8A8680; }
 .s2-gswatch { width:10px; height:10px; border-radius:2px; border:1.5px dashed rgba(212,165,116,0.4); flex-shrink:0; }
 
-/* Big-text callout — appears during last phrase (phrase system controls opacity/transform) */
+/* Big-text callout — frameless, full-width centered, appears at last phrase */
 .s2-bigtext {
   position:absolute;
-  right:48px;
-  top:50%;
-  width:300px;
-  background:rgba(255,255,255,0.97);
-  border:2px solid var(--gold) !important;
-  border-left:2px solid var(--gold) !important;
-  border-radius:14px;
-  padding:22px 26px;
+  left:0; right:0;
+  top:38%;
   text-align:center;
-  box-shadow:0 8px 40px rgba(212,165,116,0.22), 0 2px 8px rgba(0,0,0,0.07);
   z-index:10;
-  /* phrase.future applies: opacity:0; transform:translateY(6px) — we combine with centering */
-  transform:translateY(calc(-50% + 6px));
+  pointer-events:none;
+  /* No background, no border, no padding */
 }
 .s2-bigtext.active {
   opacity:1 !important;
   transform:translateY(-50%) !important;
-  background:rgba(255,255,255,0.97) !important;
-  border:2px solid var(--gold) !important;
-  border-left:2px solid var(--gold) !important;
+  background:transparent !important;
+  border-left:none !important;
 }
-.s2-bigtext.future { opacity:0; transform:translateY(calc(-50% + 14px)); }
-.s2-bigtext.past   { opacity:0; transform:translateY(calc(-50% - 6px)); }
+.s2-bigtext.future { opacity:0; transform:translateY(calc(-50% + 22px)); }
+.s2-bigtext.past   { opacity:0; transform:translateY(calc(-50% - 10px)); }
 
 .s2-bt-eye {
-  font-size:9px; font-weight:800; letter-spacing:0.14em;
-  text-transform:uppercase; color:var(--ink-faint); margin-bottom:12px;
+  font-size:10px; font-weight:800; letter-spacing:0.16em;
+  text-transform:uppercase; color:var(--ink-faint); margin-bottom:14px;
 }
 .s2-bt-main {
   font-family:'Manrope',sans-serif;
   font-weight:800;
-  font-size:26px;
-  line-height:1.3;
+  font-size:52px;
+  line-height:1.2;
   color:var(--ink);
-  letter-spacing:-0.02em;
+  letter-spacing:-0.03em;
 }
 .s2-bt-highlight {
   color:var(--gold);
   display:block;
-  font-size:30px;
+  font-size:62px;
   margin-top:6px;
-  text-shadow:0 0 28px rgba(212,165,116,0.4);
+  text-shadow:0 0 48px rgba(212,165,116,0.45);
+}
+
+/* S2 light-theme narrator card override */
+#s2-card {
+  background:rgba(232,228,220,0.96);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  border-top:1px solid rgba(212,165,116,0.28);
+}
+#s2-card .nc-label { color:rgba(212,165,116,0.75); }
+#s2-card .phrase-txt {
+  font-size:22px; line-height:1.5; color:var(--ink-light);
+}
+#s2-card .phrase-txt b  { color:var(--ink); }
+#s2-card .phrase-txt em { color:var(--ink); }
+#s2-card .phrase-txt .g { color:var(--gold); font-size:22px; }
+
+/* Real event pulse — during "advisors / friends / customers" phrase */
+.s2-ev.ev-hi {
+  animation:s2-ev-pulse 1.2s ease-in-out infinite;
+  border-left-color:var(--gold) !important;
+  box-shadow:0 4px 16px rgba(0,0,0,0.12), 0 0 0 2px rgba(212,165,116,0.32);
+  z-index:5;
+}
+@keyframes s2-ev-pulse {
+  0%, 100% { transform:scale(1); }
+  50%       { transform:scale(1.07); }
+}
+
+/* Ghost event pulse — when "The wall" bigtext appears */
+.ghost-ev.ev-hi {
+  animation:s2-ghost-pulse 1.8s ease-in-out infinite;
+  border-color:rgba(212,165,116,0.7) !important;
+}
+@keyframes s2-ghost-pulse {
+  0%, 100% { transform:scale(1);     opacity:0.85; }
+  50%       { transform:scale(1.06); opacity:1; }
 }
 
 /* ---------------------------------------------
