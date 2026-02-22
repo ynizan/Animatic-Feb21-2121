@@ -191,6 +191,9 @@ function render() {
     }
   }
 
+  // S6 custom animations -- counter, scan line, big text, results
+  if(sc.id === 's6') renderS6(scElapsed);
+
   // Progress
   const pct = (elapsed/TOTAL)*100;
   document.getElementById('progress-fill').style.width = pct+'%';
@@ -312,6 +315,129 @@ function toggleVO() {
   setTimeout(scale, 350);
   render();
 }
+
+// ===============================================================
+// S6 -- SCANNING ANIMATION
+// ===============================================================
+function renderS6(t) {
+  // Timeline:
+  //   0-4600      Phase 1: LinkedIn window visible, gentle scan starts
+  //   4600-8400   Phase 2: Active scanning, big text "Looking for strategic intros", counter runs 0->350
+  //   8400-12360  Phase 3: Big text "Evaluating who will respond to Jake", counter 350->500, results appear
+
+  const counterEl   = document.getElementById('s6-counter');
+  const progressEl  = document.getElementById('s6-progress-fill');
+  const scanLine    = document.getElementById('s6-scan-line');
+  const bigtext0    = document.getElementById('s6-bigtext0');
+  const bigtext1    = document.getElementById('s6-bigtext1');
+  const filteredEl  = document.getElementById('s6-filtered');
+  const statusBadge = document.getElementById('s6-status-badge');
+  const scanStatus  = document.getElementById('s6-scan-status');
+
+  if(!counterEl) return;
+
+  // --- Counter ---
+  let count = 0;
+  if(t < 4600) {
+    // Phase 1: no counting yet
+    count = 0;
+  } else if(t < 8400) {
+    // Phase 2: 0 -> 350
+    const p = (t - 4600) / (8400 - 4600);
+    count = Math.round(350 * easeOutQuad(p));
+  } else if(t < 12360) {
+    // Phase 3: 350 -> 500
+    const p = (t - 8400) / (12360 - 8400);
+    count = 350 + Math.round(150 * easeOutQuad(p));
+  } else {
+    count = 500;
+  }
+  counterEl.textContent = count;
+  progressEl.style.width = (count / 500 * 100) + '%';
+
+  // --- Scan line ---
+  if(t >= 4600 && t < 12000) {
+    scanLine.classList.add('active');
+    // Oscillate scan line position through the connection rows
+    const cycle = ((t - 4600) % 2000) / 2000;
+    const rowCount = 8;
+    const rowH = 52; // approximate row height
+    const topOffset = 42; // header height
+    const pos = topOffset + (cycle * rowCount * rowH);
+    scanLine.style.top = pos + 'px';
+  } else {
+    scanLine.classList.remove('active');
+  }
+
+  // --- Connection row highlights ---
+  const connRows = document.querySelectorAll('.s6-conn-row');
+  connRows.forEach(row => {
+    const idx = parseInt(row.dataset.idx);
+    // Each row "scans" based on counter progress
+    const scanThreshold = (idx + 1) * 60; // spread across 0-480
+    if(count >= scanThreshold + 30) {
+      row.classList.add('scanned');
+      row.classList.remove('scanning');
+    } else if(count >= scanThreshold) {
+      row.classList.add('scanning');
+      row.classList.remove('scanned');
+    } else {
+      row.classList.remove('scanned','scanning');
+    }
+  });
+
+  // --- Big text overlays ---
+  if(t >= 4600 && t < 8200) {
+    bigtext0.classList.add('visible');
+    bigtext0.classList.remove('exit');
+  } else if(t >= 8200 && t < 8600) {
+    bigtext0.classList.remove('visible');
+    bigtext0.classList.add('exit');
+  } else {
+    bigtext0.classList.remove('visible','exit');
+  }
+
+  if(t >= 8600 && t < 11300) {
+    bigtext1.classList.add('visible');
+    bigtext1.classList.remove('exit');
+  } else if(t >= 11300 && t < 11800) {
+    bigtext1.classList.remove('visible');
+    bigtext1.classList.add('exit');
+  } else {
+    bigtext1.classList.remove('visible','exit');
+  }
+
+  // --- Result rows ---
+  const res0 = document.getElementById('s6-res0');
+  const res1 = document.getElementById('s6-res1');
+  const res2 = document.getElementById('s6-res2');
+  if(res0) res0.classList.toggle('visible', t >= 9200);
+  if(res1) res1.classList.toggle('visible', t >= 10200);
+  if(res2) res2.classList.toggle('visible', t >= 11200);
+
+  // --- Filtered note ---
+  if(filteredEl) filteredEl.style.opacity = t >= 11800 ? '1' : '0';
+
+  // --- Status badge ---
+  if(count >= 500) {
+    statusBadge.textContent = 'COMPLETE';
+    statusBadge.style.background = '#48BB78';
+    statusBadge.style.animation = 'none';
+    if(scanStatus) scanStatus.innerHTML = '&#9679; Done';
+  } else if(count > 0) {
+    statusBadge.textContent = 'SCANNING';
+    statusBadge.style.background = '#D4A574';
+    statusBadge.style.animation = '';
+    if(scanStatus) scanStatus.innerHTML = '&#9679; Scanning...';
+  } else {
+    statusBadge.textContent = 'READY';
+    statusBadge.style.background = '#A0AEC0';
+    statusBadge.style.animation = 'none';
+    if(scanStatus) scanStatus.innerHTML = '&#9679; Ready';
+  }
+}
+
+function easeOutQuad(t) { return t * (2 - t); }
 
 // INIT
 scale();

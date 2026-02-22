@@ -1,58 +1,129 @@
 <!-- =======================================
-     SCENE 6 -- Network Scan · Type B
+     SCENE 6 -- Network Scan · Type C
 ======================================= -->
 <div class="scene scene-light" id="s6" style="background:#EEF0F5;">
-  <div class="s3-layout">
-    <div class="s3-win" style="max-width:520px;">
+
+  <!-- ====== SPLIT LAYOUT: LinkedIn left, InTouch right ====== -->
+  <div class="s6-split">
+
+    <!-- LEFT: LinkedIn connections window (from S3 style) -->
+    <div class="s6-linkedin-win" id="s6-linkedin">
+      <div class="window-chrome" style="background:#E8E4DC;border-color:#D8D4CC;">
+        <div class="dot" style="background:#C8A0A0;"></div><div class="dot" style="background:#C8C0A0;"></div><div class="dot" style="background:#A8C0A8;"></div>
+        <div style="flex:1;background:#DDDAD2;border-radius:5px;padding:5px 12px;font-size:11px;color:#777;margin-left:8px;">linkedin.com/in/jake-l./connections</div>
+      </div>
+      <div class="s3-li-head">
+        <div class="s3-logo">in</div>
+        <div class="s3-search">
+          <span style="font-size:10px;color:#888;">&#128269;</span>
+          <span style="font-size:12px;color:#777;">Jake L. &middot; 500+ connections</span>
+        </div>
+      </div>
+      <div class="s3-body">
+        <div class="s3-left">
+          <div class="s3-avatar"><img src="https://randomuser.me/api/portraits/men/30.jpg" alt=""></div>
+          <div class="s3-name">Jake L.</div>
+          <div class="s3-title">Founder (2x) &middot; Angel Investor</div>
+          <div class="s3-div"></div>
+          <div class="s3-stat"><span class="s3-sl">Connections</span><span class="s3-sv">500+</span></div>
+          <div class="s3-stat"><span class="s3-sl">Mutual</span><span class="s3-sv">47</span></div>
+        </div>
+        <div class="s3-conns" id="s6-conn-list">
+          <div class="s3-ch"><span>Jake's connections</span><span style="font-size:10px;color:#AAA;font-weight:400;">500+</span></div>
+          <div class="s3-row s6-conn-row" data-idx="0"><div class="s3-av"><img src="https://randomuser.me/api/portraits/men/45.jpg" alt=""></div><div><div class="s3-cn">Ron B.</div><div class="s3-ct">Managing Partner &middot; Fund</div><div class="s3-cm">3 mutual</div></div><div class="s3-ca">Connect</div></div>
+          <div class="s3-row s6-conn-row" data-idx="1"><div class="s3-av"><img src="https://randomuser.me/api/portraits/women/23.jpg" alt=""></div><div><div class="s3-cn">Sarah M.</div><div class="s3-ct">Investor &middot; Palo Alto</div><div class="s3-cm">1 mutual</div></div><div class="s3-ca">Connect</div></div>
+          <div class="s3-row s6-conn-row" data-idx="2"><div class="s3-av"><img src="https://randomuser.me/api/portraits/men/12.jpg" alt=""></div><div><div class="s3-cn">Tom K.</div><div class="s3-ct">Product Manager &middot; Startup</div><div class="s3-cm">12 mutual</div></div><div class="s3-ca">Connect</div></div>
+          <div class="s3-row s6-conn-row" data-idx="3"><div class="s3-av"><img src="https://randomuser.me/api/portraits/men/55.jpg" alt=""></div><div><div class="s3-cn">James W.</div><div class="s3-ct">VC Associate &middot; SF</div><div class="s3-cm">2 mutual</div></div><div class="s3-ca">Connect</div></div>
+          <div class="s3-row s6-conn-row" data-idx="4"><div class="s3-av"><img src="https://randomuser.me/api/portraits/women/67.jpg" alt=""></div><div><div class="s3-cn">Amy L.</div><div class="s3-ct">Founder &middot; B2B SaaS</div><div class="s3-cm">8 mutual</div></div><div class="s3-ca">Connect</div></div>
+          <div class="s3-row s6-conn-row" data-idx="5"><div class="s3-av"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt=""></div><div><div class="s3-cn">David P.</div><div class="s3-ct">GP &middot; Early Stage Fund</div><div class="s3-cm">5 mutual</div></div><div class="s3-ca">Connect</div></div>
+          <div class="s3-row s6-conn-row" data-idx="6"><div class="s3-av"><img src="https://randomuser.me/api/portraits/women/44.jpg" alt=""></div><div><div class="s3-cn">Lisa K.</div><div class="s3-ct">COO &middot; Series B Startup</div><div class="s3-cm">4 mutual</div></div><div class="s3-ca">Connect</div></div>
+          <div class="s3-row s6-conn-row" data-idx="7"><div class="s3-av"><img src="https://randomuser.me/api/portraits/men/68.jpg" alt=""></div><div><div class="s3-cn">Mark R.</div><div class="s3-ct">Angel Investor &middot; NYC</div><div class="s3-cm">6 mutual</div></div><div class="s3-ca">Connect</div></div>
+          <!-- Scan line overlay -->
+          <div class="s6-scan-line" id="s6-scan-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: InTouch scanning results -->
+    <div class="s6-intouch-win" id="s6-intouch">
       <div class="window-chrome" style="background:#E8EAF0;border-color:#D0D4E0;">
         <div class="dot" style="background:#C8A0A0;"></div><div class="dot" style="background:#C8C0A0;"></div><div class="dot" style="background:#A8C0A8;"></div>
-        <div style="flex:1;background:#D8DCE8;border-radius:5px;padding:5px 12px;font-size:11px;color:#666;margin-left:8px;">InTouch &middot; Scanning Jake L. &middot; 500+ connections</div>
-        <div style="background:#D4A574;color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:0.05em;">ACTIVE</div>
+        <div style="flex:1;background:#D8DCE8;border-radius:5px;padding:5px 12px;font-size:11px;color:#666;margin-left:8px;">InTouch &middot; Scanning Jake L.</div>
+        <div class="s6-active-badge" id="s6-status-badge">SCANNING</div>
       </div>
+      <!-- Scanning header -->
       <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #E0E4EC;background:#F4F6FA;">
         <div style="width:38px;height:38px;border-radius:50%;background:#4A5568;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">JL</div>
         <div>
           <div style="font-size:13px;font-weight:700;color:#2D3748;">Jake L.</div>
           <div style="font-size:11px;color:#718096;">Founder (2x) &middot; Angel Investor &middot; 500+ connections</div>
         </div>
-        <div style="margin-left:auto;font-size:10px;color:#D4A574;font-weight:700;">&#9679; Scanning...</div>
+        <div style="margin-left:auto;font-size:10px;color:#D4A574;font-weight:700;" id="s6-scan-status">&#9679; Scanning...</div>
       </div>
+      <!-- Counter -->
+      <div class="s6-counter-bar" id="s6-counter-bar">
+        <div class="s6-counter-label">Connections scanned</div>
+        <div class="s6-counter-num" id="s6-counter">0</div>
+        <div class="s6-counter-total">/ 500</div>
+        <div class="s6-progress-track">
+          <div class="s6-progress-fill" id="s6-progress-fill"></div>
+        </div>
+      </div>
+      <!-- Results area -->
       <div style="padding:12px 18px;">
         <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#A0AEC0;margin-bottom:10px;">InTouch &mdash; High-signal paths found</div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:8px;border:1px solid #E8EAF0;margin-bottom:8px;">
-          <div style="width:32px;height:32px;border-radius:50%;background:#744E2A;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">RB</div>
-          <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#2D3748;">Ron B. <span style="font-size:10px;font-weight:400;color:#718096;">&middot; Managing Partner</span></div><div style="font-size:10px;color:#A0AEC0;margin-top:1px;">Jake intro'd him to 3 of his portfolio founders</div></div>
-          <div style="text-align:right;flex-shrink:0;"><div style="font-size:9px;color:#A0AEC0;margin-bottom:3px;">Signal</div><div style="display:flex;gap:2px;"><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div><div style="width:6px;height:12px;border-radius:2px;background:#E8E4DC;"></div></div></div>
-          <div style="background:#FFF3E8;color:#C07820;font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;flex-shrink:0;">Top Tier access</div>
+        <!-- Result row 1 -->
+        <div class="s6-result-row" id="s6-res0" style="opacity:0;transform:translateY(8px);">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:8px;border:1px solid #E8EAF0;">
+            <div style="width:32px;height:32px;border-radius:50%;background:#744E2A;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">RB</div>
+            <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#2D3748;">Ron B. <span style="font-size:10px;font-weight:400;color:#718096;">&middot; Managing Partner</span></div><div style="font-size:10px;color:#A0AEC0;margin-top:1px;">Jake intro'd him to 3 of his portfolio founders</div></div>
+            <div style="background:#FFF3E8;color:#C07820;font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;flex-shrink:0;">Top Tier</div>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:8px;border:1px solid #E8EAF0;margin-bottom:8px;">
-          <div style="width:32px;height:32px;border-radius:50%;background:#2A5274;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">SM</div>
-          <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#2D3748;">Sascha M. <span style="font-size:10px;font-weight:400;color:#718096;">&middot; Angel &middot; ex-Sequoia</span></div><div style="font-size:10px;color:#A0AEC0;margin-top:1px;">2&deg; from Sequoia Capital partnership</div></div>
-          <div style="text-align:right;flex-shrink:0;"><div style="font-size:9px;color:#A0AEC0;margin-bottom:3px;">Signal</div><div style="display:flex;gap:2px;"><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div><div style="width:6px;height:12px;border-radius:2px;background:#E8E4DC;"></div><div style="width:6px;height:12px;border-radius:2px;background:#E8E4DC;"></div></div></div>
-          <div style="background:#EBF4FF;color:#2A6090;font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;flex-shrink:0;">2&deg; Sequoia</div>
+        <!-- Result row 2 -->
+        <div class="s6-result-row" id="s6-res1" style="opacity:0;transform:translateY(8px);margin-top:8px;">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:8px;border:1px solid #E8EAF0;">
+            <div style="width:32px;height:32px;border-radius:50%;background:#2A5274;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">SM</div>
+            <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#2D3748;">Sascha M. <span style="font-size:10px;font-weight:400;color:#718096;">&middot; Angel &middot; ex-Sequoia</span></div><div style="font-size:10px;color:#A0AEC0;margin-top:1px;">2&deg; from Sequoia Capital partnership</div></div>
+            <div style="background:#EBF4FF;color:#2A6090;font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;flex-shrink:0;">2&deg; Sequoia</div>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:8px;border:1px solid #E8EAF0;">
-          <div style="width:32px;height:32px;border-radius:50%;background:#2A5840;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">GM</div>
-          <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#2D3748;">Guy M. <span style="font-size:10px;font-weight:400;color:#718096;">&middot; Partner Emeritus &middot; GC</span></div><div style="font-size:10px;color:#A0AEC0;margin-top:1px;">Direct General Catalyst relationship -- warm path</div></div>
-          <div style="text-align:right;flex-shrink:0;"><div style="font-size:9px;color:#A0AEC0;margin-bottom:3px;">Signal</div><div style="display:flex;gap:2px;"><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div><div style="width:6px;height:12px;border-radius:2px;background:#D4A574;"></div></div></div>
-          <div style="background:#EDFAF1;color:#1A6B3A;font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;flex-shrink:0;">Direct GC</div>
+        <!-- Result row 3 -->
+        <div class="s6-result-row" id="s6-res2" style="opacity:0;transform:translateY(8px);margin-top:8px;">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:8px;border:1px solid #E8EAF0;">
+            <div style="width:32px;height:32px;border-radius:50%;background:#2A5840;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">GM</div>
+            <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#2D3748;">Guy M. <span style="font-size:10px;font-weight:400;color:#718096;">&middot; Partner Emeritus &middot; GC</span></div><div style="font-size:10px;color:#A0AEC0;margin-top:1px;">Direct General Catalyst relationship</div></div>
+            <div style="background:#EDFAF1;color:#1A6B3A;font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;flex-shrink:0;">Direct GC</div>
+          </div>
         </div>
-        <div style="margin-top:10px;font-size:9px;color:#A0AEC0;text-align:center;font-style:italic;">497 other connections -- low signal, filtered out</div>
+        <div class="s6-filtered-note" id="s6-filtered" style="opacity:0;">497 other connections &mdash; low signal, filtered out</div>
       </div>
     </div>
-    <div class="s3-side" style="display:flex;flex-direction:column;justify-content:center;">
-      <div class="phrase" id="s6p0">
-        <div class="phrase-eye">The meeting</div>
-        <div class="phrase-txt">I was meeting with <b>Jake</b> -- a founder with deep VC connections.</div>
-      </div>
-      <div class="phrase" id="s6p1">
-        <div class="phrase-eye">What InTouch did</div>
-        <div class="phrase-txt">Before the meeting, InTouch <span class="g">scanned his network</span>.</div>
-      </div>
-      <div class="phrase" id="s6p2">
-        <div class="phrase-eye">What it found</div>
-        <div class="phrase-txt">Who he could reach -- and who could connect me <b>up</b>, to investors I couldn't access on my own.</div>
-      </div>
+
+  </div>
+
+  <!-- ====== BIG TEXT OVERLAY ====== -->
+  <div class="s6-bigtext" id="s6-bigtext0">
+    <div class="s6-bt-label">InTouch is scanning</div>
+    <div class="s6-bt-main">Looking for<br><span class="s6-bt-gold">strategic intros</span></div>
+  </div>
+  <div class="s6-bigtext" id="s6-bigtext1">
+    <div class="s6-bt-label">InTouch is evaluating</div>
+    <div class="s6-bt-main">Evaluating who will<br><span class="s6-bt-gold">respond to Jake</span></div>
+  </div>
+
+  <!-- ====== NARRATOR CARD (subtitle bar at bottom, like S3) ====== -->
+  <div class="narrator-card" id="s6-card">
+    <div class="nc-header"><div class="nc-pulse"></div><div class="nc-label">InTouch &middot; network scan</div></div>
+    <div class="phrase" id="s6p0">
+      <div class="phrase-txt">I was meeting with <b>Jake</b> -- a founder with deep VC connections.</div>
+    </div>
+    <div class="phrase" id="s6p1">
+      <div class="phrase-txt">Before the meeting, InTouch <span class="g">scanned his network</span>.</div>
+    </div>
+    <div class="phrase" id="s6p2">
+      <div class="phrase-txt">Who he could reach -- and who could connect me <b>up</b>, to investors I couldn't access on my own.</div>
     </div>
   </div>
+
 </div>
