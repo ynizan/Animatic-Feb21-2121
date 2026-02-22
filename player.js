@@ -447,9 +447,9 @@ function renderS10(t) {
   const counterEl = document.getElementById('s10w7');
   if(!counterEl) return;
 
-  // Counter starts when the "30" word becomes active and finishes just before word end
-  const countStart = 1950;
-  const countEnd   = 2850;
+  // Counter starts immediately and reaches 30 to sync with VO "thirty"
+  const countStart = 0;
+  const countEnd   = 1200;
 
   if(t < countStart) {
     counterEl.textContent = '0';
