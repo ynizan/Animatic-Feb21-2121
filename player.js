@@ -112,7 +112,7 @@ function setWordState(id, state) {
   el.classList.add(state);
 }
 
-function setPhraseState(id, state, isLegend, isEvent) {
+function setPhraseState(id, state, isLegend, isEvent, isZoom) {
   const el = document.getElementById(id);
   if(!el) return;
   if(isLegend) {
@@ -122,6 +122,11 @@ function setPhraseState(id, state, isLegend, isEvent) {
   }
   if(isEvent) {
     el.classList.toggle('ev-hi', state==='active');
+    return;
+  }
+  if(isZoom) {
+    if(state==='future') el.classList.remove('s4z-active');
+    else el.classList.add('s4z-active');
     return;
   }
   el.classList.remove('future','active','past');
@@ -150,9 +155,9 @@ function render() {
   // Type B -- phrases
   if(sc.type==='B' && sc.phrases) {
     sc.phrases.forEach(p=>{
-      if(scElapsed < p.start)     setPhraseState(p.id,'future',p.isLegend,p.isEvent);
-      else if(scElapsed <= p.end) setPhraseState(p.id,'active',p.isLegend,p.isEvent);
-      else                        setPhraseState(p.id,'past',p.isLegend,p.isEvent);
+      if(scElapsed < p.start)     setPhraseState(p.id,'future',p.isLegend,p.isEvent,p.isZoom);
+      else if(scElapsed <= p.end) setPhraseState(p.id,'active',p.isLegend,p.isEvent,p.isZoom);
+      else                        setPhraseState(p.id,'past',p.isLegend,p.isEvent,p.isZoom);
     });
   }
 
@@ -169,9 +174,9 @@ function render() {
       }
     }
     if(sc.phrases) sc.phrases.forEach(p=>{
-      if(scElapsed < p.start)     setPhraseState(p.id,'future',p.isLegend,p.isEvent);
-      else if(scElapsed <= p.end) setPhraseState(p.id,'active',p.isLegend,p.isEvent);
-      else                        setPhraseState(p.id,'past',p.isLegend,p.isEvent);
+      if(scElapsed < p.start)     setPhraseState(p.id,'future',p.isLegend,p.isEvent,p.isZoom);
+      else if(scElapsed <= p.end) setPhraseState(p.id,'active',p.isLegend,p.isEvent,p.isZoom);
+      else                        setPhraseState(p.id,'past',p.isLegend,p.isEvent,p.isZoom);
     });
   }
 
