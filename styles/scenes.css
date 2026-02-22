@@ -276,15 +276,21 @@
 #s7.active .s6-card.d2 { animation:s7-card-enter 0.5s cubic-bezier(0.22,1,0.36,1) 0.35s backwards; }
 #s7.active .s6-card.d3 { animation:s7-card-enter 0.5s cubic-bezier(0.22,1,0.36,1) 0.5s backwards; }
 
-/* Ron B. emphasis -- camera zoom + pan across card */
-@keyframes s7-camera-zoom-pan {
+/* Ron B. emphasis -- camera zoom then Z-pan across card */
+@keyframes s7-camera-zoom {
   0%   { transform:scale(1); }
-  25%  { transform:scale(2); }
-  100% { transform:scale(2) translateX(-20%); }
+  100% { transform:scale(2); }
+}
+@keyframes s7-camera-zpan {
+  0%   { translate:0    0; }
+  40%  { translate:-20% 0; }
+  55%  { translate:20%  -5%; }
+  100% { translate:-20% -5%; }
 }
 #s7.active .s6-win {
   transform-origin:0% 38%;
-  animation:s7-camera-zoom-pan 3.2s cubic-bezier(0.25,1,0.5,1) 1.2s both;
+  animation:s7-camera-zoom 0.8s cubic-bezier(0.25,1,0.5,1) 1.2s both,
+            s7-camera-zpan 3.2s linear 2.0s both;
 }
 
 /* ---------------------------------------------
