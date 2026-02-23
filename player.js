@@ -250,10 +250,17 @@ function tick(ts) {
         s9Card.style.transition = 'none';
         s9Card.classList.add('nc-in');
       }
+      // Reset swipe state instantly so calendars don't "un-swipe" on re-entry
+      const oldCal = document.getElementById('s9-old');
+      const newCal = document.getElementById('s9-new');
+      if(oldCal) { oldCal.style.transition = 'none'; oldCal.classList.remove('s9-swiped'); }
+      if(newCal) { newCal.style.transition = 'none'; newCal.classList.remove('s9-swiped'); }
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
         s8El.classList.remove('no-fade');
         s9El.classList.remove('no-fade');
         if(s9Card) s9Card.style.transition = '';
+        if(oldCal) oldCal.style.transition = '';
+        if(newCal) newCal.style.transition = '';
       }));
     }
     lastSceneIndex = si;
