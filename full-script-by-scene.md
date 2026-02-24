@@ -78,7 +78,7 @@
 
 ---
 
-## S6 -- Network Scan (13s) | Type C
+## S6 -- Network Scan (13.5s) | Type C
 
 **On-screen narrator card:**
 - I was meeting with Jake -- a founder with deep venture capital connections.
